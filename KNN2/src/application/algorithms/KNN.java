@@ -1,7 +1,6 @@
 package application.algorithms;
 
 import java.util.List;
-import java.util.Collection;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -12,19 +11,23 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Vector;
+
+import org.xml.sax.Parser;
+
 import application.functions.Functions;
 import application.functions.Functions.NormalizedData;
-import javafx.util.Pair;
 
 public class KNN {
 
 	 public Vector<List> 	 dados =  new Vector<List>();
 	 public List<Double>	 media, desvio;
-	 public static NormalizedData   normalizedData;
-	 public static List<Classifier> classifiers = new ArrayList<Classifier>();
-	 public static int 			 K;
-	 public static int 			 KFold;
+	 public NormalizedData   normalizedData;
+	 public List<Classifier> classifiers = new ArrayList<Classifier>();
+	 public int 			 K;
+	 public int 			 KFold;
 	 public List<Double> input = new ArrayList<Double>();
 
 	 public static int 			 attributes = 0;
@@ -40,7 +43,7 @@ public class KNN {
 		 input.add(52.0);
 		 input.add(null);
 
-		 //perguntar se normaliza os dados
+		 // perguntar se  normaliza os dados
 
 		 normalizedData = Functions.zScore(dados, media, desvio, input);
 
@@ -48,10 +51,7 @@ public class KNN {
 		 System.out.println("desvio: " + desvio);
 		 System.out.println("Normalized KNN: " + normalizedData.getNormalizedKNN());
 		 System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
-		 		 
-		 application.algorithms.KFold.executeKfold();
-		 
-		 //calculateKnn(normalizedData.getNormalizedInputData());
+		 calculateKnn(normalizedData.getNormalizedInputData(), K, KFold);
 		 System.out.println("KNN: " + getKNN());
 		 System.out.println("attribute: " + attributes);
 		 System.out.println("sample: " + samples);
@@ -155,10 +155,45 @@ public class KNN {
 		return tmp;
 	}
 
-	public void calculateKnn(List<Double> input){
+	public void calculateKnn(List<Double> input, int k, int kFold){
 
 		Vector<List> tmp = normalizedData.getNormalizedKNN();
-		
+		tmp= Collections.shuffle(tmp);
+
+		int[] tamanhos = new int[kFold];// aloca vetor com os tamanhos de cada fold k
+		int[] ini = new int[kFold];// inicio de cada fold
+		int[] fim = new int[kFold];// fim de cada fold
+
+        int tamPadrao = (int) Math.floor(samples / kFold);
+        int restante = samples % kFold;
+        System.out.println("Serão " + kFold + " folds contendo os seguintes tamanhos:\n");
+
+        //Distribui as amostras de modo que cada fold fique com tamanho mais proximo um do outro
+        for (int i = 0; i < kFold; i++) {
+            tamanhos[i] = tamPadrao;
+            if (restante > 0) {
+                tamanhos[i]++;
+                restante--;
+            }
+            System.out.println(tamanhos[i]);
+		}
+
+		for (int i = 0; i < kFold; i++) {
+			ini[i]= tamanhos[i];
+			fim[i]= tamanhos[i];
+		}
+
+		for (int i = 0; i < kFold; i++) { // itera em cada fold
+            for(int j= idx; j< idx + tamanhos[i] -1; j++){ //itera em cada amostra do fold
+				//Amostra temp= amostras[j];
+				classifiers.add(new Classifier((Double)tmp.get(i).get(tmp.get(i).size()-1),
+ 											Functions.euclidianDistance(tmp.get(i), input)));
+            }
+            //idx+= tamanhos[i]-1;
+        }
+
+        int idx= 0;
+
 		for(int i=0; i<tmp.size(); i++) {
  			classifiers.add(new Classifier((Double)tmp.get(i).get(tmp.get(i).size()-1),
  											Functions.euclidianDistance(tmp.get(i), input)));
@@ -169,6 +204,32 @@ public class KNN {
 		for(Classifier c : classifiers) {
 			System.out.println("classe: " + c.getClasses() + " distance: " + c.getDistance() + "\n");
 		}
+
+	}
+
+	public class Classifier implements Comparable<Classifier>{
+		public Double classes;
+		public Double distance;
+
+		public Classifier(double classes, double distance) {
+			this.classes = classes;
+			this.distance = distance;
+		}
+
+		public Double getClasses() {
+			return classes;
+		}
+
+		public Double getDistance() {
+			return distance;
+		}
+
+		public int compareTo(Classifier anotherInstance) {
+
+			if (this.distance < anotherInstance.distance) return -1;
+	        if (this.distance > anotherInstance.distance) return 1;
+	        return 0;
+	    }
 
 	}
 
