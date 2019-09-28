@@ -9,6 +9,7 @@ public class Functions {
 
 	private static Double pow = 2.0;
 	private static List<Double> auxiliar;
+	private static List<Double> line;
 
 	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation, List<Double> inputData){
 		
@@ -23,11 +24,14 @@ public class Functions {
 		List<Double> tmp = new ArrayList<Double>();
 		
 		for(int j=0; j < dados.size(); j++) {
+			
 			tmp = new ArrayList<Double>();
+			line = dados.get(j);
+			
 			for(int k=0; k<averages.size(); k++) {
-				tmp.add(((Double)dados.get(j).get(k)- averages.get(k))/standardDeviation.get(k));
+				tmp.add(((Double)line.get(k)- averages.get(k))/standardDeviation.get(k));
 			}
-			tmp.add((Double)dados.get(j).get(dados.get(j).size()-1));
+			tmp.add((Double) line.get(line.size()-1));
 			normalizedKNN.add(tmp);
 		}
 			
@@ -51,11 +55,12 @@ public class Functions {
 		
 		for(int i=0; i < dados.size(); i++) {
 			for(int j=0; j<dados.get(i).size()-1; j++) {
+				line = dados.get(i);
 				
 				if(i == 0) {
-					auxiliar.add((Double)dados.get(i).get(j));
+					auxiliar.add((Double)line.get(j));
 				} else {
-					auxiliar.set(j, auxiliar.get(j) + (Double)dados.get(i).get(j));
+					auxiliar.set(j, auxiliar.get(j) + (Double)line.get(j));
 				}
 				
 			}	
@@ -70,11 +75,12 @@ public class Functions {
 		
 		for(int i=0; i < dados.size(); i++) {
 			for(int j=0; j<dados.get(i).size()-1; j++) {
+				line = dados.get(i);
 				
 				if(i == 0) {
-					auxiliar.add(Math.pow((Double)dados.get(i).get(j) - averages.get(j), pow));
+					auxiliar.add(Math.pow((Double) line.get(j) - averages.get(j), pow));
 				} else {
-					auxiliar.set(j, auxiliar.get(j) + Math.pow((Double)dados.get(i).get(j) - averages.get(j), pow));
+					auxiliar.set(j, auxiliar.get(j) + Math.pow((Double)line.get(j) - averages.get(j), pow));
 				}
 			}	
 		}

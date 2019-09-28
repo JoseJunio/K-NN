@@ -23,13 +23,16 @@ public class KNN {
 	 public NormalizedData   normalizedData;
 	 public List<Classifier> classifiers = new ArrayList<Classifier>();
 	 
+	 // Vai virar parametro de entrada - INICIO
+	 public int 			 knn = 5;
+	 public List<Double> input = new ArrayList<Double>();
+	 // Vai virar parametro de entrada - FIM
 	 
 	 public KNN() {
 		 loadData();
 		 media = Functions.average(dados);
 		 desvio = Functions.standardDeviation(dados, media);
 		 
-		 List<Double> input = new ArrayList<Double>();
 		 input.add(1.75);
 		 input.add(52.0);
 		 input.add(null);
@@ -41,12 +44,14 @@ public class KNN {
 		 System.out.println("Normalized KNN: " + normalizedData.getNormalizedKNN());
 		 System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
 		 calculateKnn(normalizedData.getNormalizedInputData());
+		 System.out.println("KNN: " + getKNN());
+		 
 	 
 	 }
 	 
 	public void loadData() {
 		try {
-			 BufferedReader br = new BufferedReader(new FileReader("/Users/josejunio/eclipse-workspace/K-NN/src/dados.txt"));
+			 BufferedReader br = new BufferedReader(new FileReader("/Users/josejunio/eclipse-workspace/K-NN-bkp/src/dados.txt"));
 			 while(br.ready()){
 				 String linha = br.readLine();
 				 List tmp = (List) Arrays.asList(linha.split("\\s+")); 
@@ -60,6 +65,16 @@ public class KNN {
 		}	
 	} 
 
+	public List<Double> getKNN(){
+		List<Double> tmp = new ArrayList<>();
+		
+		for(int i=0; i < knn; i++) {
+			tmp.add(classifiers.get(i).getDistance());
+		}
+	
+		return tmp;
+	} 	
+	
 	public void calculateKnn(List<Double> input){
 		
 		Vector<List> tmp = normalizedData.getNormalizedKNN();
