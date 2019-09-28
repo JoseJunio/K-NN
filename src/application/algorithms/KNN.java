@@ -1,9 +1,13 @@
 package application.algorithms;
 
 import java.util.List;
+import java.util.Scanner;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,11 +26,11 @@ public class KNN {
 	 public List<Double>	 media, desvio;
 	 public NormalizedData   normalizedData;
 	 public List<Classifier> classifiers = new ArrayList<Classifier>();
-	 
-	 // Vai virar parametro de entrada - INICIO
-	 public int 			 knn = 5;
+	 public int 			 attributes;
+	 public int 			 samples;
+	 public int 			 K;
+	 public int 			 KFold;
 	 public List<Double> input = new ArrayList<Double>();
-	 // Vai virar parametro de entrada - FIM
 	 
 	 public KNN() {
 		 loadData();
@@ -45,30 +49,102 @@ public class KNN {
 		 System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
 		 calculateKnn(normalizedData.getNormalizedInputData());
 		 System.out.println("KNN: " + getKNN());
-		 
+		 System.out.println("attribute: " + attributes);
+		 System.out.println("sample: " + samples);
 	 
 	 }
 	 
 	public void loadData() {
-		try {
-			 BufferedReader br = new BufferedReader(new FileReader("/Users/josejunio/eclipse-workspace/K-NN-bkp/src/dados.txt"));
-			 while(br.ready()){
-				 String linha = br.readLine();
-				 List tmp = (List) Arrays.asList(linha.split("\\s+")); 
-				 dados.add(tmp);
-			}
-			br.close();
-			System.out.println(dados);
-			dados = Functions.convertStringToDouble(dados);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	} 
+		
+		InputStream input;
+		String 		line;
+		boolean		caminhoValido = false;
+		int numeroAmostras = 0;
+		
+		Scanner scanner = new Scanner(System.in);
+		
+        while (!caminhoValido) {
+            System.out.println("Entre com o caminho do arquivo contendo as amostras: ");
+            String caminho = "/Users/josejunio/eclipse-workspace/K-NN-bkp/src/dados.txt"; // myObj.nextLine();
+            List tmp;                                                                                                     
+            BufferedReader buff;                                                                               
+            
+            try {
+                input = new FileInputStream(caminho);
+                buff = new BufferedReader(new InputStreamReader(input));
+                
+                while (buff.ready()) {
+                    line = buff.readLine();
+                    tmp = (List) Arrays.asList(line.split("\\s+"));
+                    
+                    if (numeroAmostras > 0) {// pula primeira linha
+                    	dados.add(tmp);
+                    } else {
+                    	samples = Integer.parseInt(tmp.get(0).toString());
+                    	attributes = Integer.parseInt(tmp.get(1).toString());
+                    }
+                    
+                    numeroAmostras++;// incrementa numero de amostras
+                }
+                caminhoValido = true;
+                dados = Functions.convertStringToDouble(dados);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println(">>>>>>>>>>>>>>>>>>>\nFalha na leitura do arquivo!");
+                System.out.println("Caminho inválido. Tente novamente\n");
+            } 
+        }
+        
+        
+        // define K vizinhos
+        boolean kValido = false;
+        Object myObj;
+		while (!kValido) {
+            System.out.println("Entre com o numero de vizinhos (k): ");
+            String kStr = scanner.nextLine();
+            try {
+                K = Integer.parseInt(kStr);
+                if (K <= samples && K >= 1) {
+                    kValido = true;
+                } else {
+                    System.out.println(
+                            "\n\n>>>>>>k precisa ser um número maior que zero e menor ou igual ao número de amostras ("
+                                    + samples + "):\n");
+                }
+            } catch (Exception e) {
+                System.out.println("\n\n>>>>>>k precisa ser um número inteiro. Tente novamente:\n");
+            }
+        }
+		
+        // define particoes do K-fold
+        boolean kFoldValido = false;
+        while (!kFoldValido) {
+            System.out.println("Entre com o número de partições k-fold: ");
+            String kStr = scanner.nextLine();
+            try {
+                KFold = Integer.parseInt(kStr);
+                if (KFold <= samples) {
+                    if (KFold >= 2) {
+                        kFoldValido = true;
+                    } else {
+                        System.out.println("\n\n>>>>>>k precisa ser um número divisivel pelo numero de amostras "
+                                + samples + ":\n");
+                    }
+                } else {
+                    System.out.println("\n\n>>>>>>k precisa ser um número menor ou igual ao número de amostras ("
+                            + samples + "):\n");
+                }
+            } catch (Exception e) {
+                System.out.println("\n\n>>>>>>k precisa ser um número inteiro. Tente novamente:\n");
+            }
+        }
+        
+    } 
 
 	public List<Double> getKNN(){
 		List<Double> tmp = new ArrayList<>();
 		
-		for(int i=0; i < knn; i++) {
+		for(int i=0; i < K; i++) {
 			tmp.add(classifiers.get(i).getDistance());
 		}
 	
