@@ -5,30 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import application.algorithms.KNN;
+
 public class Functions {
 
 	private static Double pow = 2.0;
 	private static List<Double> auxiliar;
 	private static List<Double> line;
-
+	
 	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation, List<Double> inputData){
 		
 		Vector<List> normalizedKNN = new Vector<List>();
 		List<Double> normalizedInputData = new ArrayList<Double>(); 
 		
-		
-		for(int i=0; i<averages.size(); i++) {
+		for(int i=0; i < averages.size(); i++) {
 			normalizedInputData.add((inputData.get(i) - averages.get(i))/standardDeviation.get(i));
 		}
 		
 		List<Double> tmp = new ArrayList<Double>();
 		
-		for(int j=0; j < dados.size(); j++) {
+		for(int j=0; j < KNN.samples; j++) {
 			
 			tmp = new ArrayList<Double>();
 			line = dados.get(j);
 			
-			for(int k=0; k<averages.size(); k++) {
+			for(int k=0; k < averages.size(); k++) {
 				tmp.add(((Double)line.get(k)- averages.get(k))/standardDeviation.get(k));
 			}
 			tmp.add((Double) line.get(line.size()-1));
@@ -42,7 +43,7 @@ public class Functions {
 		
 		Double cont = 0.0;
 		
-		for(int i=0; i<inputData.size()-1; i++) {
+		for(int i=0; i < inputData.size()-1; i++) {
 			cont += (Math.pow(inputData.get(i) - sample.get(i), 2));
 		}
 		
@@ -53,8 +54,8 @@ public class Functions {
 
 		auxiliar = new ArrayList();
 		
-		for(int i=0; i < dados.size(); i++) {
-			for(int j=0; j<dados.get(i).size()-1; j++) {
+		for(int i=0; i < KNN.samples; i++) {
+			for(int j=0; j < KNN.attributes; j++) {
 				line = dados.get(i);
 				
 				if(i == 0) {
@@ -73,8 +74,8 @@ public class Functions {
 		
 		auxiliar = new ArrayList();
 		
-		for(int i=0; i < dados.size(); i++) {
-			for(int j=0; j<dados.get(i).size()-1; j++) {
+		for(int i=0; i < KNN.samples; i++) {
+			for(int j=0; j < KNN.attributes; j++) {
 				line = dados.get(i);
 				
 				if(i == 0) {
@@ -104,9 +105,9 @@ public class Functions {
 		
 		Vector<List> tmp = new Vector<List>();
 		
-		for(int i=0; i < dados.size(); i++) {
+		for(int i=0; i < KNN.samples; i++) {
 			List newList = new ArrayList();
-			for(int j=0; j<dados.get(i).size(); j++) {
+			for(int j=0; j < dados.get(i).size(); j++) {
 				newList.add(Double.parseDouble(dados.get(i).get(j).toString()));
 			}
 			tmp.add(newList);

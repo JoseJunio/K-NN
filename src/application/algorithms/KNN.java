@@ -26,14 +26,16 @@ public class KNN {
 	 public List<Double>	 media, desvio;
 	 public NormalizedData   normalizedData;
 	 public List<Classifier> classifiers = new ArrayList<Classifier>();
-	 public int 			 attributes;
-	 public int 			 samples;
 	 public int 			 K;
 	 public int 			 KFold;
 	 public List<Double> input = new ArrayList<Double>();
 	 
+	 public static int 			 attributes = 0;
+	 public static int 			 samples = 0;
+	 
 	 public KNN() {
 		 loadData();
+		 
 		 media = Functions.average(dados);
 		 desvio = Functions.standardDeviation(dados, media);
 		 
