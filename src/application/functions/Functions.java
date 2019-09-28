@@ -22,7 +22,7 @@ public class Functions {
 		
 		List<Double> tmp = new ArrayList<Double>();
 		
-		for(int j=0; j < dados.size()-1; j++) {
+		for(int j=0; j < dados.size(); j++) {
 			tmp = new ArrayList<Double>();
 			for(int k=0; k<averages.size(); k++) {
 				tmp.add(((Double)dados.get(j).get(k)- averages.get(k))/standardDeviation.get(k));
@@ -39,7 +39,7 @@ public class Functions {
 		Double cont = 0.0;
 		
 		for(int i=0; i<inputData.size()-1; i++) {
-			cont += Math.pow(inputData.get(i) - sample.get(i), 2);
+			cont += (Math.pow(inputData.get(i) - sample.get(i), 2));
 		}
 		
 		return Math.sqrt(cont);
@@ -61,17 +61,7 @@ public class Functions {
 			}	
 		}
 		
-		for(int i=0; i<auxiliar.size(); i++) {
-			Double average = auxiliar.get(i);
-			
-			if(average != 0.0) {
-				auxiliar.set(i, average / dados.size());
-			}
-		}
-		
-		return auxiliar;
-		
-		//return calculateAux(dados);
+		return calculateAux(dados, false);
 	}
 	
 	public static List<Double> variance(Vector<List> dados, List<Double> averages) {
@@ -89,7 +79,7 @@ public class Functions {
 			}	
 		}
 		
-		return calculateAux(dados); 
+		return calculateAux(dados, true); 
 	} 
 	
 	public static List<Double> standardDeviation(Vector<List> dados, List<Double> averages){
@@ -119,18 +109,20 @@ public class Functions {
 		return tmp;
 	} 
 	
-	public static List<Double> calculateAux(Vector<List> dados){
+	public static List<Double> calculateAux(Vector<List> dados, boolean isVariance){
 		
 		for(int i=0; i<auxiliar.size(); i++) {
 			Double average = auxiliar.get(i);
 			
 			if(average != 0.0) {
-				auxiliar.set(i, average / (dados.size()-1.0));
+				if(isVariance) {
+					auxiliar.set(i, average / (dados.size()-1.0));
+				} else {
+					auxiliar.set(i, average / dados.size());
+				}
 			}
 		}
-		
 		return auxiliar;
-		
 	}
 
 	public static class NormalizedData{

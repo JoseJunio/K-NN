@@ -2,7 +2,6 @@ package application;
 
 import java.util.Scanner;
 
-import org.omg.CORBA.INTERNAL;
 import org.xml.sax.Parser;
 
 import application.algorithms.KNN;
@@ -26,21 +25,21 @@ public class Application {
 			
 		
 			System.out.println("######################### k-NN #########################");
-			System.out.println("Favor entrar com os dados para a aplicação do K-NN\n");
+			System.out.println("Favor entrar com os dados para a aplicaï¿½ï¿½o do K-NN\n");
 			
 			System.out.print("Caminho do arquivo das amostras: ");
 			path = in.nextLine();//System.console().readLine();
 			
-			System.out.print("\nNúmero de partições (k-fold): ");
+			System.out.print("\nNï¿½mero de partiï¿½ï¿½es (k-fold): ");
 			kFold = in.nextInt();//Integer.parseInt(System.console().readLine());
 			
-			System.out.print("\nNúmero de vizinhos mais próximos (k-NN): ");
+			System.out.print("\nNï¿½mero de vizinhos mais prï¿½ximos (k-NN): ");
 			kNN = in.nextInt();//Integer.parseInt(System.console().readLine());
 			
-			System.out.print("\nNúmero de vizinhos mais próximos (k-NN): ");
+			System.out.print("\nNï¿½mero de vizinhos mais prï¿½ximos (k-NN): ");
 			kNN = in.nextInt();//Integer.parseInt(System.console().readLine());
 			
-			System.out.print("\nAplicar a normalização dos dados (S/N): ");
+			System.out.print("\nAplicar a normalizaï¿½ï¿½o dos dados (S/N): ");
 			in = in.reset();
 			int i = in.nextInt();//.equals("S") ? true : false;
 			
