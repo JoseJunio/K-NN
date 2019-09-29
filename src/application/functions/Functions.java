@@ -13,15 +13,11 @@ public class Functions {
 	private static List<Double> auxiliar;
 	private static List<Double> line;
 	
-	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation, List<Double> inputData){
+	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation){
 		
 		Vector<List> normalizedKNN = new Vector<List>();
 		List<Double> normalizedInputData = new ArrayList<Double>(); 
-		
-		for(int i=0; i < averages.size(); i++) {
-			normalizedInputData.add((inputData.get(i) - averages.get(i))/standardDeviation.get(i));
-		}
-		
+						
 		List<Double> tmp = new ArrayList<Double>();
 		
 		for(int j=0; j < KNN.samples; j++) {

@@ -36,23 +36,19 @@ public class KNN {
 		 media = Functions.average(dados);
 		 desvio = Functions.standardDeviation(dados, media);
 
-		 input.add(1.75);
-		 input.add(52.0);
-		 input.add(null);
-
 		 //perguntar se normaliza os dados
 
-		 normalizedData = Functions.zScore(dados, media, desvio, input);
+		 normalizedData = Functions.zScore(dados, media, desvio);
 
 		 System.out.println("media: " + media);
 		 System.out.println("desvio: " + desvio);
 		 System.out.println("Normalized KNN: " + normalizedData.getNormalizedKNN());
-		 System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
+		 //System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
 		 		 
 		 application.algorithms.KFold.executeKfold();
 		 
 		 //calculateKnn(normalizedData.getNormalizedInputData());
-		 System.out.println("KNN: " + getKNN());
+		 //System.out.println("KNN: " + getKNN());
 		 System.out.println("attribute: " + attributes);
 		 System.out.println("sample: " + samples);
 
@@ -69,7 +65,7 @@ public class KNN {
 
         while (!caminhoValido) {
             System.out.println("Entre com o caminho do arquivo contendo as amostras: ");
-            String caminho = "/Users/josejunio/eclipse-workspace/K-NN-bkp/src/dados.txt"; // myObj.nextLine();
+            String caminho = "/Users/Shared/Rec de Padroes/reconhecimentodepadroes2019-knn/Trabalho1/data/dados.txt"; // myObj.nextLine();
             List tmp;
             BufferedReader buff;
 

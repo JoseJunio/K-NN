@@ -2,6 +2,7 @@ package application.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import application.functions.Functions;
@@ -15,7 +16,7 @@ public class KFold {
 	
 	public static int getCluster(int idx) {
 		for (int i= 0; i< ranges.size(); i++) {
-			if(i >= ranges.get(i).getKey() && i<= ranges.get(i).getValue()) {
+			if(idx >= ranges.get(i).getKey() && idx<= ranges.get(i).getValue()) {
 				return i;
 			}
 		}
@@ -33,7 +34,7 @@ public class KFold {
 
         int tamPadrao = (int) Math.floor(KNN.samples / KNN.KFold);
         int restante = KNN.samples % KNN.KFold;
-        System.out.println("Serão " + KNN.KFold + " folds contendo os seguintes tamanhos:\n");
+        System.out.println("\nSerão " + KNN.KFold + " folds contendo os seguintes tamanhos:\n");
 
         //Distribui as amostras de modo que cada fold fique com tamanho mais proximo um do outro
         for (int i = 0; i < KNN.KFold; i++) {
@@ -53,19 +54,74 @@ public class KFold {
 		}
         
         for (int i= 0; i< KNN.samples; i++) {
-        	for(int j= 0; j< KNN.samples; j++) {
-        		Double classe= (Double) tmp.get(i).get(KNN.attributes);
+        	Double classe= (Double) tmp.get(i).get(KNN.attributes);
+        	for(int j= 0; j< KNN.samples; j++) {        		
         		List treino= tmp.get(i);
         		List amostra= tmp.get(j);
         		
         		//se j não for amostra do mesmo cluster de i
         		if(getCluster(i) != getCluster(j)) {
         			Double distance= Functions.euclidianDistance(treino, amostra);
-        			Classifier c= new Classifier((Double)tmp.get(j).get(KNN.attributes), distance);	
+        			Classifier c= new Classifier(classe, distance);	
             		KNN.classifiers.add(c);        			
         		}
-        	}  
-        	Collections.sort(KNN.classifiers);
-        }        
-	}	
+        	}
+        	Collections.sort(KNN.classifiers);//ordena lista baseado na distancia
+        	
+        	//pegar os k primeiros ver qual classe ganha
+        	int kLocal= KNN.K; //Inicialmente K é o definido pelo usuario mas pode ser diminuido em caso de empate
+        	boolean empate= true;
+        	int novaClasse= -1;
+        	    
+        	while(empate) {
+        		HashMap<Double, Integer> classeQtd = new HashMap<Double, Integer>();
+	        	for(int k=0; k< kLocal; k++) {
+	        		Double cls= KNN.classifiers.get(k).getClasses();
+	        		System.out.println("distancia: "+ KNN.classifiers.get(k).getDistance() +", classse: " + KNN.classifiers.get(k).getClasses()+ "\n");
+	        		if(classeQtd.containsKey(cls)) {
+	        			int qtd= classeQtd.get(cls);
+	        			classeQtd.put(cls, ++qtd);//incrementa qtd de ocorrencias da classe
+	        		}else {
+	        			classeQtd.put(cls, 1);//primeira ocorrencia da classe, quantidade 1
+	        		}
+	        	}
+	        	
+	        	Integer max = Collections.max(classeQtd.values());//descobre qual maior quantidade (da classe ganhadora)
+	        	       	
+	        	List<Integer> qtds= (List<Integer>) classeQtd.values();
+	        	
+	        	int repeticoes= 0;//Verifica quantas classes tem essa mesma quantidade
+	        	for(int l=0; l< qtds.size();l++) {
+	        		if(qtds.get(l) == max) {
+	        			repeticoes++;
+	        		}
+	        	}
+	        	
+	        	//empate? 
+	        	if(repeticoes == 1) {// nao repete
+	        		empate= false;
+	        	}
+	        	else {// repete
+	        		kLocal--;// decrementa K para esse treino e tenta de novo descobrir a vencedora
+	        	}
+	        	novaClasse= 
+	        		        	
+        	}
+        	
+        	//calcular taxa de acerto
+        	if(novaClasse == classe) {
+        		//acerto
+        	}else {
+        		//erro
+        	}
+        	
+        	int tam= KNN.classifiers.size();
+        	       	
+        	
+        	
+        	KNN.classifiers.clear(); //limpa a lista para ser usada no proximo cluster
+        	
+        	
+        } 
+	}
 }
