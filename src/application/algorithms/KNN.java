@@ -44,13 +44,13 @@ public class KNN {
 		 System.out.println("desvio: " + desvio);
 		 System.out.println("Normalized KNN: " + normalizedData.getNormalizedKNN());
 		 //System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
-		 		 
-		 application.algorithms.KFold.executeKfold();
-		 
+		 		 		 
 		 //calculateKnn(normalizedData.getNormalizedInputData());
 		 //System.out.println("KNN: " + getKNN());
 		 System.out.println("attribute: " + attributes);
 		 System.out.println("sample: " + samples);
+		 
+		 application.algorithms.KFold.executeKfold();
 
 	 }
 

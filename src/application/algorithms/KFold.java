@@ -58,11 +58,11 @@ public class KFold {
         int acertos= 0;
         
         for (int i= 0; i< KNN.samples; i++) {
-        	Double classe= (Double) tmp.get(i).get(KNN.attributes);
+        	Double classeOriginal= (Double) tmp.get(i).get(KNN.attributes);
         	for(int j= 0; j< KNN.samples; j++) {        		
         		List treino= tmp.get(i);
         		List amostra= tmp.get(j);
-        		
+        		Double classe= (Double) tmp.get(j).get(KNN.attributes);
         		//se j não for amostra do mesmo cluster de i
         		if(getCluster(i) != getCluster(j)) {
         			Double distance= Functions.euclidianDistance(treino, amostra);
@@ -79,9 +79,10 @@ public class KFold {
         	    
         	while(empate) {
         		HashMap<Double, Integer> classeQtd = new HashMap<Double, Integer>();
-	        	for(int k=0; k< kLocal; k++) {
+	        	
+        		for(int k=0; k< kLocal; k++) {
 	        		Double cls= KNN.classifiers.get(k).getClasses();
-	        		System.out.println("distancia: "+ KNN.classifiers.get(k).getDistance() +", classse: " + KNN.classifiers.get(k).getClasses()+ "\n");
+	        		//System.out.println("distancia: "+ KNN.classifiers.get(k).getDistance() +", classse: " + KNN.classifiers.get(k).getClasses()+ "\n");
 	        		if(classeQtd.containsKey(cls)) {
 	        			int qtd= classeQtd.get(cls);
 	        			classeQtd.put(cls, ++qtd);//incrementa qtd de ocorrencias da classe
@@ -100,7 +101,6 @@ public class KFold {
         		    if(value == max) {
         		    	repeticoes++;
         		    	novaClasse= key;
-        		    	break;
         		    }
         		}	        		        	        	    
 	        		        	
@@ -110,22 +110,23 @@ public class KFold {
 	        	}
 	        	else {// repete
 	        		kLocal--;// decrementa K para esse treino e tenta de novo descobrir a vencedora
-	        	}	        		        		        	
+	        	}      		        	
         	}
         	
         	//Saiu do while, já nap há repeticao de classe vencedora e a nova classe é unanime.
         	
         	//calcular taxa de acerto
-        	if(novaClasse == classe) {
+        	if(novaClasse == classeOriginal) {
         		//acerto
         		acertos++;
-        	}   	       	
+        	}
         	
         	KNN.classifiers.clear(); //limpa a lista para ser usada no proximo cluster
         	
         }
+        double taxaAcerto= (1.0 * acertos / KNN.samples) * 100;//(acertos/KNN.samples * 100) * 1.0;
         
-        System.out.println("TAxa de acerto: "+ acertos/KNN.samples* 100+ "\n");
+        System.out.println("\n" + acertos + " acertos de "+ KNN.samples+ ". Taxa de acerto: " + taxaAcerto + "%. Taxa de erro: " + (100.0 - taxaAcerto) + "%");
         
 	}
 }
