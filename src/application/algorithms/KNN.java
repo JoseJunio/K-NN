@@ -1,21 +1,17 @@
 package application.algorithms;
 
 import java.util.List;
-import java.util.Collection;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Vector;
 import application.functions.Functions;
 import application.functions.Functions.NormalizedData;
-import javafx.util.Pair;
 
 public class KNN {
 
@@ -33,19 +29,10 @@ public class KNN {
 	 public KNN() {
 		 loadData();
 
-		 media = Functions.average(dados);
-		 desvio = Functions.standardDeviation(dados, media);
-
-		 //perguntar se normaliza os dados
-
-		 normalizedData = Functions.zScore(dados, media, desvio);
-
 		 System.out.println("media: " + media);
 		 System.out.println("desvio: " + desvio);
 		 System.out.println("Normalized KNN: " + normalizedData.getNormalizedKNN());
-		 //System.out.println("Normalized Input: " + normalizedData.getNormalizedInputData());
 		 		 		 
-		 //calculateKnn(normalizedData.getNormalizedInputData());
 		 //System.out.println("KNN: " + getKNN());
 		 System.out.println("attribute: " + attributes);
 		 System.out.println("sample: " + samples);
@@ -60,12 +47,11 @@ public class KNN {
 		String 		line;
 		boolean		caminhoValido = false;
 		int numeroAmostras = 0;
-
 		Scanner scanner = new Scanner(System.in);
 
         while (!caminhoValido) {
             System.out.println("Entre com o caminho do arquivo contendo as amostras: ");
-            String caminho = "/Users/Shared/Rec de Padroes/reconhecimentodepadroes2019-knn/Trabalho1/data/dados.txt"; // myObj.nextLine();
+            String caminho = scanner.nextLine();
             List tmp;
             BufferedReader buff;
 
@@ -89,16 +75,38 @@ public class KNN {
                 caminhoValido = true;
                 dados = Functions.convertStringToDouble(dados);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 System.out.println(">>>>>>>>>>>>>>>>>>>\nFalha na leitura do arquivo!");
                 System.out.println("Caminho inválido. Tente novamente\n");
             }
         }
-
+        
+        media = Functions.average(dados);
+		desvio = Functions.standardDeviation(dados, media);
+        
+        //Normalizar dados?
+        boolean normalizarValido = false;
+		while (!normalizarValido) {
+            System.out.println("Deseja normalizar os dados (com o algoritmo z-score) antes de aplicar o classificador? (Y/N)\n");
+            String str = scanner.nextLine();
+           
+            if (str.equals("Y") || str.equals("y")) {
+       		 	normalizedData = Functions.zScore(dados, media, desvio);
+            	normalizarValido = true;
+            }
+            else if(str.equals("N") || str.equals("n")) {
+            	normalizedData = Functions.zScore(dados, media, desvio);//TODO remover normalizacao e retornar dados apenas
+            	normalizarValido = true;
+            }
+            else {
+                System.out.println(
+                        "\n\n>>>>>>Opcao inválida. Responda com Y ou N.\n");
+            }
+            
+        }
 
         // define K vizinhos
         boolean kValido = false;
-        Object myObj;
 		while (!kValido) {
             System.out.println("Entre com o numero de vizinhos (k): ");
             String kStr = scanner.nextLine();
@@ -138,6 +146,8 @@ public class KNN {
                 System.out.println("\n\n>>>>>>k precisa ser um número inteiro. Tente novamente:\n");
             }
         }
+        
+        scanner.close();
 
     }
 
@@ -149,23 +159,6 @@ public class KNN {
 		}
 
 		return tmp;
-	}
-
-	public void calculateKnn(List<Double> input){
-
-		Vector<List> tmp = normalizedData.getNormalizedKNN();
-		
-		for(int i=0; i<tmp.size(); i++) {
- 			classifiers.add(new Classifier((Double)tmp.get(i).get(tmp.get(i).size()-1),
- 											Functions.euclidianDistance(tmp.get(i), input)));
-		}
-
-		Collections.sort((List<Classifier>) classifiers);
-
-		for(Classifier c : classifiers) {
-			System.out.println("classe: " + c.getClasses() + " distance: " + c.getDistance() + "\n");
-		}
-
 	}
 
 }
