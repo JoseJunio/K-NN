@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import application.functions.Functions;
 import application.functions.Functions.NormalizedData;
@@ -53,6 +55,8 @@ public class KFold {
             ini+= tamanhos[i];
 		}
         
+        int acertos= 0;
+        
         for (int i= 0; i< KNN.samples; i++) {
         	Double classe= (Double) tmp.get(i).get(KNN.attributes);
         	for(int j= 0; j< KNN.samples; j++) {        		
@@ -71,7 +75,7 @@ public class KFold {
         	//pegar os k primeiros ver qual classe ganha
         	int kLocal= KNN.K; //Inicialmente K é o definido pelo usuario mas pode ser diminuido em caso de empate
         	boolean empate= true;
-        	int novaClasse= -1;
+        	double novaClasse= -1;
         	    
         	while(empate) {
         		HashMap<Double, Integer> classeQtd = new HashMap<Double, Integer>();
@@ -87,41 +91,41 @@ public class KFold {
 	        	}
 	        	
 	        	Integer max = Collections.max(classeQtd.values());//descobre qual maior quantidade (da classe ganhadora)
-	        	       	
-	        	List<Integer> qtds= (List<Integer>) classeQtd.values();
+	        	int repeticoes= 0;
 	        	
-	        	int repeticoes= 0;//Verifica quantas classes tem essa mesma quantidade
-	        	for(int l=0; l< qtds.size();l++) {
-	        		if(qtds.get(l) == max) {
-	        			repeticoes++;
-	        		}
-	        	}
-	        	
+	        	//itera no hashmap verificando qual a classe mais repetida (nova classe de i) e se ela é a única com aquela pontuacao
+	        	for (Entry<Double, Integer> entry : classeQtd.entrySet()) {
+        		    Double key = entry.getKey();
+        		    Object value = entry.getValue();
+        		    if(value == max) {
+        		    	repeticoes++;
+        		    	novaClasse= key;
+        		    	break;
+        		    }
+        		}	        		        	        	    
+	        		        	
 	        	//empate? 
 	        	if(repeticoes == 1) {// nao repete
-	        		empate= false;
+	        		empate= false;	        		
 	        	}
 	        	else {// repete
 	        		kLocal--;// decrementa K para esse treino e tenta de novo descobrir a vencedora
-	        	}
-	        	novaClasse= 
-	        		        	
+	        	}	        		        		        	
         	}
+        	
+        	//Saiu do while, já nap há repeticao de classe vencedora e a nova classe é unanime.
         	
         	//calcular taxa de acerto
         	if(novaClasse == classe) {
         		//acerto
-        	}else {
-        		//erro
-        	}
-        	
-        	int tam= KNN.classifiers.size();
-        	       	
-        	
+        		acertos++;
+        	}   	       	
         	
         	KNN.classifiers.clear(); //limpa a lista para ser usada no proximo cluster
         	
-        	
-        } 
+        }
+        
+        System.out.println("TAxa de acerto: "+ acertos/KNN.samples* 100+ "\n");
+        
 	}
 }
