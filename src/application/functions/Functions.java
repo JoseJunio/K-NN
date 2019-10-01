@@ -13,10 +13,9 @@ public class Functions {
 	private static List<Double> auxiliar;
 	private static List<Double> line;
 	
-	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation){
+	public static NormalizedData zScore(Vector<List> dados, List<Double> averages, List<Double> standardDeviation, boolean normalized){
 		
 		Vector<List> normalizedKNN = new Vector<List>();
-		List<Double> normalizedInputData = new ArrayList<Double>(); 
 						
 		List<Double> tmp = new ArrayList<Double>();
 		
@@ -31,8 +30,8 @@ public class Functions {
 			tmp.add((Double) line.get(line.size()-1));
 			normalizedKNN.add(tmp);
 		}
-			
-		return new NormalizedData(normalizedKNN, normalizedInputData);
+		
+		return new NormalizedData(normalized ? normalizedKNN : dados);
 	}
 	
 	public static Double euclidianDistance(List<Double> inputData, List<Double> sample) {
@@ -130,19 +129,13 @@ public class Functions {
 
 	public static class NormalizedData{
 		private Vector<List> normalizedKNN;
-		private List<Double> normalizedInputData;
 		
-		public NormalizedData(Vector<List> normalizedKNN, List<Double> normalizedInputData) {
+		public NormalizedData(Vector<List> normalizedKNN) {
 			this.normalizedKNN = normalizedKNN;
-			this.normalizedInputData = normalizedInputData;
 		}
 		
 		public Vector<List> getNormalizedKNN() {
 			return normalizedKNN;
-		}
-		
-		public List<Double> getNormalizedInputData() {
-			return normalizedInputData;
 		}
 		
 	}

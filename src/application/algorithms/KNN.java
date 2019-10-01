@@ -91,11 +91,11 @@ public class KNN {
             String str = scanner.nextLine();
            
             if (str.equals("Y") || str.equals("y")) {
-       		 	normalizedData = Functions.zScore(dados, media, desvio);
+       		 	normalizedData = Functions.zScore(dados, media, desvio, true);
             	normalizarValido = true;
             }
             else if(str.equals("N") || str.equals("n")) {
-            	normalizedData = Functions.zScore(dados, media, desvio);//TODO remover normalizacao e retornar dados apenas
+            	normalizedData = Functions.zScore(dados, media, desvio, false);
             	normalizarValido = true;
             }
             else {
